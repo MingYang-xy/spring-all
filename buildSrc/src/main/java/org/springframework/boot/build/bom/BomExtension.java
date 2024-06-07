@@ -120,40 +120,40 @@ public class BomExtension {
 	}
 
 	public void effectiveBomArtifact() {
-		Configuration effectiveBomConfiguration = this.project.getConfigurations().create("effectiveBom");
-		this.project.getTasks().matching((task) -> task.getName().equals(DeployedPlugin.GENERATE_POM_TASK_NAME))
-				.all((task) -> {
-					Sync syncBom = this.project.getTasks().create("syncBom", Sync.class);
-					syncBom.dependsOn(task);
-					File generatedBomDir = new File(this.project.getBuildDir(), "generated/bom");
-					syncBom.setDestinationDir(generatedBomDir);
-					syncBom.from(((GenerateMavenPom) task).getDestination(), (pom) -> pom.rename((name) -> "pom.xml"));
-					try {
-						String settingsXmlContent = FileCopyUtils
-								.copyToString(new InputStreamReader(
-										getClass().getClassLoader().getResourceAsStream("effective-bom-settings.xml"),
-										StandardCharsets.UTF_8))
-								.replace("localRepositoryPath",
-										new File(this.project.getBuildDir(), "local-m2-repository").getAbsolutePath());
-						syncBom.from(this.project.getResources().getText().fromString(settingsXmlContent),
-								(settingsXml) -> settingsXml.rename((name) -> "settings.xml"));
-					}
-					catch (IOException ex) {
-						throw new GradleException("Failed to prepare settings.xml", ex);
-					}
-					MavenExec generateEffectiveBom = this.project.getTasks().create("generateEffectiveBom",
-							MavenExec.class);
-					generateEffectiveBom.setProjectDir(generatedBomDir);
-					File effectiveBom = new File(this.project.getBuildDir(),
-							"generated/effective-bom/" + this.project.getName() + "-effective-bom.xml");
-					generateEffectiveBom.args("--settings", "settings.xml", "help:effective-pom",
-							"-Doutput=" + effectiveBom);
-					generateEffectiveBom.dependsOn(syncBom);
-					generateEffectiveBom.getOutputs().file(effectiveBom);
-					generateEffectiveBom.doLast(new StripUnrepeatableOutputAction(effectiveBom));
-					this.project.getArtifacts().add(effectiveBomConfiguration.getName(), effectiveBom,
-							(artifact) -> artifact.builtBy(generateEffectiveBom));
-				});
+//		Configuration effectiveBomConfiguration = this.project.getConfigurations().create("effectiveBom");
+//		this.project.getTasks().matching((task) -> task.getName().equals(DeployedPlugin.GENERATE_POM_TASK_NAME))
+//				.all((task) -> {
+//					Sync syncBom = this.project.getTasks().create("syncBom", Sync.class);
+//					syncBom.dependsOn(task);
+//					File generatedBomDir = new File(this.project.getBuildDir(), "generated/bom");
+//					syncBom.setDestinationDir(generatedBomDir);
+//					syncBom.from(((GenerateMavenPom) task).getDestination(), (pom) -> pom.rename((name) -> "pom.xml"));
+//					try {
+//						String settingsXmlContent = FileCopyUtils
+//								.copyToString(new InputStreamReader(
+//										getClass().getClassLoader().getResourceAsStream("effective-bom-settings.xml"),
+//										StandardCharsets.UTF_8))
+//								.replace("localRepositoryPath",
+//										new File(this.project.getBuildDir(), "local-m2-repository").getAbsolutePath());
+//						syncBom.from(this.project.getResources().getText().fromString(settingsXmlContent),
+//								(settingsXml) -> settingsXml.rename((name) -> "settings.xml"));
+//					}
+//					catch (IOException ex) {
+//						throw new GradleException("Failed to prepare settings.xml", ex);
+//					}
+//					MavenExec generateEffectiveBom = this.project.getTasks().create("generateEffectiveBom",
+//							MavenExec.class);
+//					generateEffectiveBom.setProjectDir(generatedBomDir);
+//					File effectiveBom = new File(this.project.getBuildDir(),
+//							"generated/effective-bom/" + this.project.getName() + "-effective-bom.xml");
+//					generateEffectiveBom.args("--settings", "settings.xml", "help:effective-pom",
+//							"-Doutput=" + effectiveBom);
+//					generateEffectiveBom.dependsOn(syncBom);
+//					generateEffectiveBom.getOutputs().file(effectiveBom);
+//					generateEffectiveBom.doLast(new StripUnrepeatableOutputAction(effectiveBom));
+//					this.project.getArtifacts().add(effectiveBomConfiguration.getName(), effectiveBom,
+//							(artifact) -> artifact.builtBy(generateEffectiveBom));
+//				});
 	}
 
 	private String createDependencyNotation(String groupId, String artifactId, DependencyVersion version) {
