@@ -1,0 +1,2 @@
+org.springframework.context.ApplicationListener=com.example.mingyang.listener.MyApplicationListener
+org.springframework.boot.env.EnvironmentPostProcessor=com.example.mingyang.processor.MyEnvironmentPostProcessor

@@ -1,0 +1,108 @@
+// ------------------------------------------------------------------------
+// 本文件的修改：
+// 1.合并spring和springboot的插件，并做出必要的修改
+// ------------------------------------------------------------------------
+plugins {
+	id "java-gradle-plugin"
+}
+
+repositories {
+	//加上阿里云镜像
+	mavenCentral()
+	maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+	maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+	maven { url "https://repo.spring.io/plugins-release" }
+	gradlePluginPortal()
+	maven { url "https://repo.spring.io/release" }
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+dependencies {
+	implementation "me.champeau.gradle:japicmp-gradle-plugin:0.3.0"
+	implementation(platform("org.springframework:spring-framework-bom:5.3.15"))
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.11.4")
+	implementation("commons-codec:commons-codec:1.13")
+	implementation("org.apache.maven:maven-embedder:3.6.2")
+	implementation("org.asciidoctor:asciidoctor-gradle-jvm:3.3.2")
+	implementation("org.gradle:test-retry-gradle-plugin:1.4.0")
+	implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.0")
+	implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.5.0")
+	implementation("org.springframework:spring-core")
+	implementation("org.springframework:spring-web")
+	implementation("io.spring.javaformat:spring-javaformat-gradle-plugin:${javaFormatVersion}")
+	testImplementation("org.assertj:assertj-core:3.11.1")
+	testImplementation("org.apache.logging.log4j:log4j-core:2.17.1")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+
+gradlePlugin {
+	plugins {
+		// 这里由于spring和springboot都定义了optional-dependencies插件，并且名字都叫optionalDependenciesPlugin
+		// 所以如果只是简单的将spring中的插件复制过来，编译时会报错。需要改一下名字
+		optionalDependenciesPlugin1 {
+			id = "org.springframework.build.optional-dependencies"
+			implementationClass = "org.springframework.build.optional.OptionalDependenciesPlugin"
+		}
+		optionalDependenciesPlugin2 {
+			id = "org.springframework.boot.optional-dependencies"
+			implementationClass = "org.springframework.boot.build.optional.OptionalDependenciesPlugin"
+		}
+		annotationProcessorPlugin {
+			id = "org.springframework.boot.annotation-processor"
+			implementationClass = "org.springframework.boot.build.processors.AnnotationProcessorPlugin"
+		}
+		autoConfigurationPlugin {
+			id = "org.springframework.boot.auto-configuration"
+			implementationClass = "org.springframework.boot.build.autoconfigure.AutoConfigurationPlugin"
+		}
+		bomPlugin {
+			id = "org.springframework.boot.bom"
+			implementationClass = "org.springframework.boot.build.bom.BomPlugin"
+		}
+		configurationPropertiesPlugin {
+			id = "org.springframework.boot.configuration-properties"
+			implementationClass = "org.springframework.boot.build.context.properties.ConfigurationPropertiesPlugin"
+		}
+		conventionsPlugin {
+			id = "org.springframework.boot.conventions"
+			implementationClass = "org.springframework.boot.build.ConventionsPlugin"
+		}
+		deployedPlugin {
+			id = "org.springframework.boot.deployed"
+			implementationClass = "org.springframework.boot.build.DeployedPlugin"
+		}
+		integrationTestPlugin {
+			id = "org.springframework.boot.integration-test"
+			implementationClass = "org.springframework.boot.build.test.IntegrationTestPlugin"
+		}
+		mavenPluginPlugin {
+			id = "org.springframework.boot.maven-plugin"
+			implementationClass = "org.springframework.boot.build.mavenplugin.MavenPluginPlugin"
+		}
+		mavenRepositoryPlugin {
+			id = "org.springframework.boot.maven-repository"
+			implementationClass = "org.springframework.boot.build.MavenRepositoryPlugin"
+		}
+		starterPlugin {
+			id = "org.springframework.boot.starter"
+			implementationClass = "org.springframework.boot.build.starters.StarterPlugin"
+		}
+		testFailuresPlugin {
+			id = "org.springframework.boot.test-failures"
+			implementationClass = "org.springframework.boot.build.testing.TestFailuresPlugin"
+		}
+		apiDiffPlugin {
+			id = "org.springframework.build.api-diff"
+			implementationClass = "org.springframework.build.api.ApiDiffPlugin"
+		}
+		compileConventionsPlugin {
+			id = "org.springframework.build.compile"
+			implementationClass = "org.springframework.build.compile.CompilerConventionsPlugin"
+		}
+	}
+}
+

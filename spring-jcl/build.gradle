@@ -1,0 +1,8 @@
+description = "Spring Commons Logging Bridge"
+
+group = 'org.springframework'
+version = '5.3.33'
+dependencies {
+	optional("org.apache.logging.log4j:log4j-api")
+	optional("org.slf4j:slf4j-api")
+}

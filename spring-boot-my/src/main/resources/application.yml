@@ -1,0 +1,13 @@
+# spring.main开头的配置会绑定到SpringApplication类的属性上
+spring:
+  main:
+    # 设置banner的模式，有三种：off、console、logfile
+    bannerMode: console
+    # 是否打印启动信息
+    logStartupInfo: true
+mysql:
+  host: 192.168.0.12
+  port: 3306
+  database: mybatis_demo
+  username: root
+  password: PASSWORD[UnxNYl55Gor2zQDh4AxR4ufBpAlVFBM5tLJ17a9HuYE=]

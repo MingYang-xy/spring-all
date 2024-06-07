@@ -1,0 +1,119 @@
+// ------------------------------------------------------------------------
+// 本文件的修改：
+// 1.include spring项目
+// ------------------------------------------------------------------------
+pluginManagement {
+	repositories {
+		//加上阿里云镜像
+		mavenLocal()
+		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+		maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+		maven { url "https://repo.spring.io/plugins-release" }
+		mavenCentral()
+		gradlePluginPortal()
+		maven {url 'https://repo.spring.io/release'}
+		if (version.endsWith('-SNAPSHOT')) {
+			maven { url "https://repo.spring.io/snapshot" }
+		}
+	}
+	resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id == "org.jetbrains.kotlin.jvm") {
+				useVersion "${kotlinVersion}"
+			}
+			if (requested.id.id == "org.jetbrains.kotlin.plugin.spring") {
+				useVersion "${kotlinVersion}"
+			}
+		}
+	}
+}
+
+plugins {
+	id "com.gradle.enterprise" version "3.12.1"
+	id "io.spring.ge.conventions" version "0.0.13"
+}
+
+rootProject.name="spring-all"
+
+include "spring-boot-project:spring-boot-dependencies"
+include "spring-boot-project:spring-boot-parent"
+include "spring-boot-project:spring-boot-tools:spring-boot-antlib"
+include "spring-boot-project:spring-boot-tools:spring-boot-autoconfigure-processor"
+include "spring-boot-project:spring-boot-tools:spring-boot-buildpack-platform"
+include "spring-boot-project:spring-boot-tools:spring-boot-configuration-metadata"
+include "spring-boot-project:spring-boot-tools:spring-boot-configuration-processor"
+//原因：spring-boot-gradle-plugin:asciidoctor build FAILED
+//include "spring-boot-project:spring-boot-tools:spring-boot-gradle-plugin"
+include "spring-boot-project:spring-boot-tools:spring-boot-jarmode-layertools"
+include "spring-boot-project:spring-boot-tools:spring-boot-loader"
+include "spring-boot-project:spring-boot-tools:spring-boot-loader-tools"
+//原因：用不着maven插件了
+//include "spring-boot-project:spring-boot-tools:spring-boot-maven-plugin"
+include "spring-boot-project:spring-boot-tools:spring-boot-test-support"
+include "spring-boot-project:spring-boot"
+include "spring-boot-project:spring-boot-autoconfigure"
+include "spring-boot-project:spring-boot-actuator"
+//原因：spring-boot-actuator-autoconfigure:asciidoctor build FAILED
+//include "spring-boot-project:spring-boot-actuator-autoconfigure"
+//include "spring-boot-project:spring-boot-cli"
+//include "spring-boot-project:spring-boot-devtools"
+//include "spring-boot-project:spring-boot-docs"
+include "spring-boot-project:spring-boot-properties-migrator"
+include "spring-boot-project:spring-boot-test"
+include "spring-boot-project:spring-boot-test-autoconfigure"
+
+include "spring-aop"
+include "spring-beans"
+include "spring-context"
+include "spring-context-indexer"
+include "spring-context-support"
+include "spring-core"
+include "spring-expression"
+include "spring-instrument"
+include "spring-jcl"
+include "spring-jdbc"
+include "spring-jms"
+include "spring-messaging"
+include "spring-orm"
+include "spring-oxm"
+include "spring-r2dbc"
+include "spring-test"
+include "spring-tx"
+include "spring-web"
+include "spring-webflux"
+include "spring-webmvc"
+include "spring-websocket"
+include "framework-bom"
+include "integration-tests"
+include 'spring-my'
+
+file("${rootDir}/spring-boot-project/spring-boot-starters").eachDirMatch(~/spring-boot-starter.*/) {
+	include "spring-boot-project:spring-boot-starters:${it.name}"
+}
+// 这里删掉了官方提供的spring-boot-test包，是测试模块和一些代码案例，没啥用。
+//file("${rootDir}/spring-boot-tests/spring-boot-smoke-tests").eachDirMatch(~/spring-boot-smoke-test.*/) {
+//	include "spring-boot-tests:spring-boot-smoke-tests:${it.name}"
+//}
+include 'spring-boot-my'
+
+
+settings.gradle.projectsLoaded {
+	gradleEnterprise {
+		buildScan {
+			def toolchainVersion = settings.gradle.rootProject.findProperty('toolchainVersion')
+			if (toolchainVersion != null) {
+				value('Toolchain version', toolchainVersion)
+				tag("JDK-$toolchainVersion")
+			}
+			def buildDir = settings.gradle.rootProject.getBuildDir()
+			buildDir.mkdirs()
+			new File(buildDir, "build-scan-uri.txt").text = "build scan not generated"
+			buildScanPublished { scan ->
+				buildDir.mkdirs()
+				new File(buildDir, "build-scan-uri.txt").text = "<${scan.buildScanUri}|build scan>\n"
+			}
+		}
+	}
+}
+
+

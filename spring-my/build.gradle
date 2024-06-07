@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.springframework'
+version = '5.3.33'
+
+dependencies {
+    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
+    api(project(":spring-aop"))
+    api(project(":spring-beans"))
+    api(project(":spring-context"))
+    api(project(":spring-core"))
+    api(project(":spring-expression"))
+    api(project(":spring-web"))
+    api(project(":spring-webmvc"))
+}
