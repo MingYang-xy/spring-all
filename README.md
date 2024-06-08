@@ -1,5 +1,6 @@
 # Spring-all（Spring和Spring Boot源码整合）
 
+关键词：Spring源码  Springboot源码 spring和springboot源码整合 聚合 合并 编译 
 这是一个整合了Spring源码和Spring Boot源码的综合项目。相比于独立调试Spring Boot项目【运行到Spring相关的代码，会进入编译好的只读类文件中，我们无法修改源码】但在这个整合项目中，当运行到Spring相关代码时，可以直接进入Spring源码，可以轻松地修改代码和添加注释。
 
 ## Tips:
@@ -22,20 +23,19 @@
 
 1. `JDK`环境： `JDK 11`  必须的，8和17会有【缺失】【已过时】【待删除】等错误，会编译失败！
 2. `gradle`环境：`gradle-7.5.1` 注意配置好`GRADLE_HOME`和`GRADLE_USER_HOME`环境变量和`init.d`中的初始化文件，具体操作请自行搜索。
-3. `maven`环境：`maven-3.6.1` 是的，`gradle`项目依然需要maven环境，注意配置好`M2_HOME`环境变量、`setting.xml`文件
 
-JDK和Maven环境好说，大部分开发人员应该都很熟悉，主要是gradle：安装包我已经提供，找个地方解压就算安装了，找个教程配一下环境变量，再把我给的init.gradle文件放进init.d文件就OK了，后续也不需要我们自己执行什么命令，都在idea中操作。
+gradle：安装包我已经提供，找个地方解压就算安装了，找个教程配一下环境变量，再把我给的init.gradle文件放进init.d文件就OK了，后续也不需要我们自己执行什么命令，都在idea中操作。
 
 ### 开始编译
 
-1. clone项目
+1. clone项目，当前版本：springboot 2.5.15 spring 5.3.33
 
 2. 用idea open 本项目，打开后会自动加载本项目，加载结果我们先不管，我们还需要自己配置一些地方。
 
 3. 检查项目SDK设置和gradle设置，具体如图。
 
 
-![image-20240607224145152](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607224145152.png)
+![image-20240607224145152](https://github.com/MingYang-xy/spring-all/blob/main/img\image-20240607224145152.png)
 
 ![image-20240607224200582](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607224200582.png)
 
@@ -47,4 +47,6 @@ JDK和Maven环境好说，大部分开发人员应该都很熟悉，主要是gra
 
 ![image-20240607225050288](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607225050288.png)
 
-5. 好了，双击build，如果不出意外的话，就能够正常BUILD SUCCESSFUL了。
+5. 好了，双击build，第一次build会下载很多依赖文件，耐心等待一下，如果不出意外的话，就能够正常BUILD SUCCESSFUL了。
+
+以上，希望对你有所帮助！
