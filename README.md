@@ -35,17 +35,17 @@ gradle：安装包我已经提供，找个地方解压就算安装了，找个�
 3. 检查项目SDK设置和gradle设置，具体如图。
 
 
-![image-20240607224145152](https://github.com/MingYang-xy/spring-all/blob/main/img\image-20240607224145152.png)
+![image-20240607224145152](img/image-20240607224145152.png)
 
-![image-20240607224200582](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607224200582.png)
+![image-20240607224200582](img/image-20240607224200582.png)
 
-![image-20240607224608108](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607224608108.png)
+![image-20240607224608108](img/image-20240607224608108.png)
 
 4. 设置build参数，跳过单元测试。如此成熟的框架，我们完全没有必要再去执行单元测试。（不跳过会build失败！）
 
-![image-20240607225027660](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607225027660.png)
+![image-20240607225027660](img/image-20240607225027660.png)
 
-![image-20240607225050288](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240607225050288.png)
+![image-20240607225050288](img/image-20240607225050288.png)
 
 5. 好了，双击build，第一次build会下载很多依赖文件，耐心等待一下，如果不出意外的话，就能够正常BUILD SUCCESSFUL了。
 
