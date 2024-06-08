@@ -57,6 +57,22 @@
 
 ![image-20240608114633544](img/image-20240608114633544.png)
 
+6. 现在你可以去`spring-boot-my`模块，编写代码，调试源码了。
+```java
+package com.example.mingyang;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MyStudyApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MyStudyApplication.class, args);
+		System.out.println("(♥◠‿◠)ﾉﾞ  启动成功   ლ(´ڡ`ლ)ﾞ  \n");
+	}
+}
+```
 ## 整合思路
 
 todo
