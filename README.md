@@ -160,7 +160,7 @@ public class MyStudyApplication {
 
 #### 3.2.3 整合【配置文件】
 
-1. 整合`build.gradle`：这里的`build.gradle`是父级项目的配置，`spring`和`springboot`项目都在此做了大量的配置，此处不再详细编写文档描写，建议下载源码阅读该文件中的注释。由于`.gradle`文件本质是一个groovy脚本，并不是像pom.xml那样只能简单声明依赖，而是一个可以运行的脚本，因此这个文件中
+1. 整合`build.gradle`：这里的`build.gradle`是父级项目的配置，`spring`和`springboot`项目都在此做了大量的配置，此处不再详细编写文档描写，建议下载源码阅读该文件中的注释。
 
 2. 整合 `setting.gradle`文件，这个文件定义的内容比较简单，大致结构如下，可以很简单的复制粘贴合并起来。
 
