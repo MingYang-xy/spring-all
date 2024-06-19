@@ -13,5 +13,5 @@ dependencies {
 	testImplementation(project(":spring-boot-project:spring-boot-test"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testImplementation("org.assertj:assertj-core")
-	testImplementation("org.springframework:spring-test")
+	testImplementation(project(":spring-test"))
 }

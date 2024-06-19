@@ -17,8 +17,8 @@ public class BeanLifeApplication {
 		// user构造器
 		// 依赖注入: D:\java8
 		// <<<<<< 初始化之前执行, 这里返回的对象会替换掉原本的 bean, 如 @PostConstruct、@ConfigurationProperties
-		// PostConstruct....
-		// afterPropertiesSet....
+		// PostConstruct....  这个注解是 通过一个beanPostProcessor在初始化前方法处理的
+		// afterPropertiesSet.... 这里就是在执行init-method之前代码检查有没有实现InitializingBean接口，如果有就执行
 		// 可以通过xml或者@Bean指定init-method自定义初始化过程
 		// <<<<<< 初始化之后执行, 这里返回的对象会替换掉原本的 bean, 如代理增强
 		// <<<<<< 销毁之前执行, 如 @PreDestroy

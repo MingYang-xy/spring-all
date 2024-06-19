@@ -130,11 +130,11 @@ dependencies {
 	optional("org.mongodb:mongodb-driver-sync")
 	optional("org.neo4j.driver:neo4j-java-driver")
 	optional("org.quartz-scheduler:quartz")
-	optional("org.springframework:spring-jdbc")
-	optional("org.springframework:spring-jms")
-	optional("org.springframework:spring-messaging")
-	optional("org.springframework:spring-webflux")
-	optional("org.springframework:spring-webmvc")
+	optional(project(":spring-jdbc"))
+	optional(project(":spring-jms"))
+	optional(project(":spring-messaging"))
+	optional(project(":spring-webflux"))
+	optional(project(":spring-webmvc"))
 	optional("org.springframework.amqp:spring-rabbit")
 	optional("org.springframework.data:spring-data-cassandra") {
 		exclude group: "org.slf4j", module: "jcl-over-slf4j"
@@ -181,7 +181,7 @@ dependencies {
 	testImplementation("org.mockito:mockito-core")
 	testImplementation("org.mockito:mockito-junit-jupiter")
 	testImplementation("org.skyscreamer:jsonassert")
-	testImplementation("org.springframework:spring-orm")
+	testImplementation(project(":spring-orm"))
 	testImplementation("org.springframework.data:spring-data-rest-webmvc")
 	testImplementation("org.springframework.integration:spring-integration-jmx")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc") {

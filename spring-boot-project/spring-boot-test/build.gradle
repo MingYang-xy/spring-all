@@ -33,9 +33,9 @@ dependencies {
 		exclude(group: "commons-logging", module: "commons-logging")
 	}
 	optional("org.seleniumhq.selenium:selenium-api")
-	optional("org.springframework:spring-test")
-	optional("org.springframework:spring-web")
-	optional("org.springframework:spring-webflux")
+	optional(project(":spring-test"))
+	optional(project(":spring-web"))
+	optional(project(":spring-webflux"))
 	optional("net.sourceforge.htmlunit:htmlunit") {
 		exclude(group: "commons-logging", module: "commons-logging")
 	}
@@ -52,7 +52,7 @@ dependencies {
 	testImplementation("org.mockito:mockito-junit-jupiter")
 	testImplementation("org.slf4j:slf4j-api")
 	testImplementation("org.spockframework:spock-core")
-	testImplementation("org.springframework:spring-webmvc")
+	testImplementation(project(":spring-webmvc"))
 	testImplementation("org.testng:testng")
 
 	testRuntimeOnly("org.junit.vintage:junit-vintage-engine")

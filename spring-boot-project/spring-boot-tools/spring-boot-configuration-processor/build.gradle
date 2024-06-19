@@ -25,5 +25,5 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testImplementation("org.mockito:mockito-core")
 	testImplementation("org.projectlombok:lombok")
-	testImplementation("org.springframework:spring-core")
+	testImplementation(project(":spring-core"))
 }

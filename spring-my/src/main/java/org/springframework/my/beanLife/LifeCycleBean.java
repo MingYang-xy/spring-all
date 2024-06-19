@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
-
 @Component
 public class LifeCycleBean implements InitializingBean {
 
@@ -29,15 +28,22 @@ public class LifeCycleBean implements InitializingBean {
 
 	/**
 	 * 这里的 PostConstruct应该解释为 依赖注入之后
+	 * InitDestroyAnnotationBeanPostProcessor在postProcessBeforeInitialization初始化前方法处理了该注解
+	 * 该BeanPostProcessor主要处理@PostConstruct和@PreDestroy
 	 */
-	public void init() {
+	// @PostConstruct
+	public void postConstruct() {
 		logger.info("PostConstruct....");
 	}
 
+	// @PreDestroy
 	public void destroy() {
 		logger.info("销毁");
 	}
 
+	/**
+	 * 当前步骤属于初始化阶段，在执行initMethod之前会检查是否实现InitializingBean接口，调用当前方法
+	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		logger.info("afterPropertiesSet....");

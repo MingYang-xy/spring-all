@@ -2,8 +2,6 @@ package org.springframework.my;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.my.bean.Hello;
-
 
 @ComponentScan
 public class MyStudyApplication {
@@ -14,7 +12,8 @@ public class MyStudyApplication {
 		// AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		// context.register(MyStudyApplication.class);
 		// context.refresh();
-		Hello bean = context.getBean(Hello.class);
-		System.out.println(bean);
+		// Object userController = context.getBean("userController");
+		// System.out.println(userController);
+		// context.close();
 	}
 }

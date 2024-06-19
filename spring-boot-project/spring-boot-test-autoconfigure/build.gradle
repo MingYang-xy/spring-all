@@ -40,11 +40,11 @@ dependencies {
 		exclude group: "commons-logging", module: "commons-logging"
 	}
 	optional("org.seleniumhq.selenium:selenium-api")
-	optional("org.springframework:spring-orm")
-	optional("org.springframework:spring-test")
-	optional("org.springframework:spring-web")
-	optional("org.springframework:spring-webmvc")
-	optional("org.springframework:spring-webflux")
+	optional(project(":spring-orm"))
+	optional(project(":spring-test"))
+	optional(project(":spring-web"))
+	optional(project(":spring-webmvc"))
+	optional(project(":spring-webflux"))
 	optional("org.springframework.data:spring-data-cassandra") {
 		exclude group: "org.slf4j", module: "jcl-over-slf4j"
 	}

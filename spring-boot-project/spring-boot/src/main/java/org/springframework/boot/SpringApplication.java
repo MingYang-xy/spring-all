@@ -495,7 +495,7 @@ public class SpringApplication {
 		}
 		// 添加配置文件重新排序后处理器
 		context.addBeanFactoryPostProcessor(new PropertySourceOrderingBeanFactoryPostProcessor(context));
-		// Load the sources 加载所有beanDefinition源
+		// Load the sources 加载所有beanDefinition源：目前还只加载到primarySource一个源文件
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
 		// 加载primarySources和source的[BeanDefinition]

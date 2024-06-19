@@ -6,7 +6,11 @@ group = 'org.springframework'
 version = '5.3.33'
 
 dependencies {
-    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
+    //本项目使用的springboot内嵌tomcat版本为9.0.x版本，仅支持Javax包，不支持jakarta
+    //而JDK11又移除了Javax，所以得自己添加Javax依赖
+    //@PostConstruct@PreDestroy都是javax包提供的注解，对应的解析器是InitDestroyAnnotationBeanPostProcessor
+    //不加javax的包，就没有上述功能。
+//    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     api(project(":spring-aop"))
     api(project(":spring-beans"))
     api(project(":spring-context"))

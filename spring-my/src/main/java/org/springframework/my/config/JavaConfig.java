@@ -2,7 +2,6 @@ package org.springframework.my.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.my.bean.Hello;
 
 /**
  * JavaConfig
@@ -13,8 +12,4 @@ import org.springframework.my.bean.Hello;
 @Configuration
 public class JavaConfig {
 
-	@Bean(initMethod = "init")
-	public Hello hello() {
-		return new Hello();
-	}
 }

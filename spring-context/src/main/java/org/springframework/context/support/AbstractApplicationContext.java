@@ -605,7 +605,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 实例化所有非懒加载的单利bean
+				// 实例化剩余的非懒加载的单利bean，因为在此之前一些beanFactory或者PostProcessor都提前getBean已经创建了
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -671,7 +671,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
-		// 初始化刷新前监听器对象，直接启动spring容器时可能为空，MY-TODO 但是springboot在此处会有扩展
+		// 初始化刷新前监听器对象，直接启动spring容器时可能为空
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}

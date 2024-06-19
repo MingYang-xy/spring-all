@@ -7,16 +7,15 @@ plugins {
 description = "Spring Boot Loader"
 
 dependencies {
-	compileOnly("org.springframework:spring-core")
+	compileOnly(project(":spring-core"))
 
 	testImplementation(project(":spring-boot-project:spring-boot-tools:spring-boot-test-support"))
 	testImplementation("org.assertj:assertj-core")
 	testImplementation("org.awaitility:awaitility")
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testImplementation("org.mockito:mockito-core")
-	testImplementation("org.springframework:spring-test")
-
+	testImplementation(project(":spring-test"))
 	testRuntimeOnly("ch.qos.logback:logback-classic")
 	testRuntimeOnly("org.bouncycastle:bcprov-jdk16:1.46")
-	testRuntimeOnly("org.springframework:spring-webmvc")
+	testRuntimeOnly(project(":spring-webmvc"))
 }

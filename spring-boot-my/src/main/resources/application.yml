@@ -5,9 +5,19 @@ spring:
     bannerMode: console
     # 是否打印启动信息
     logStartupInfo: true
-mysql:
-  host: 192.168.0.12
-  port: 3306
-  database: mybatis_demo
-  username: root
-  password: PASSWORD[UnxNYl55Gor2zQDh4AxR4ufBpAlVFBM5tLJ17a9HuYE=]
+  datasource: #数据源，这里未使用连接池
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/spring
+    username: root
+    password: 123456
+
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.example.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+
+logging:
+  level:
+    com.example: debug
+    org.springframework: warn

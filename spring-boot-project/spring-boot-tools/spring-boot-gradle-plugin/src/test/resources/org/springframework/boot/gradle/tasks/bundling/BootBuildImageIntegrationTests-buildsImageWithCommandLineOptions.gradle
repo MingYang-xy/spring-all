@@ -1,7 +1,0 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '{version}'
-}
-
-sourceCompatibility = '11'
-targetCompatibility = '11'

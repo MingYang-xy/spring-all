@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyBeanPostProcessor implements InstantiationAwareBeanPostProcessor, DestructionAwareBeanPostProcessor {
-
 	private final Log log = LogFactory.getLog(getClass());
 
 	@Override
@@ -36,7 +35,7 @@ public class MyBeanPostProcessor implements InstantiationAwareBeanPostProcessor,
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
 		if (beanName.equals("lifeCycleBean")) {
-			log.info("<<<<<< 依赖注入阶段执行, 如 @Autowired、@Value、@Resource");
+			log.info("<<<<<< 依赖注入阶段执行,这里是属性填充的增强逻辑 如 @Autowired、@Value、@Resource");
 		}
 		return pvs;
 	}
