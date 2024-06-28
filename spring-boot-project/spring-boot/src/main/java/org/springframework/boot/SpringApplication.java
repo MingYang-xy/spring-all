@@ -856,7 +856,7 @@ public class SpringApplication {
 	 * @param applicationContext the application context to refresh
 	 */
 	protected void refresh(ConfigurableApplicationContext applicationContext) {
-		// 实际调用IOC容器的刷新方法，后续解释见spring项目源码
+		// 实际调用AbstractApplicationContext的刷新方法
 		applicationContext.refresh();
 	}
 

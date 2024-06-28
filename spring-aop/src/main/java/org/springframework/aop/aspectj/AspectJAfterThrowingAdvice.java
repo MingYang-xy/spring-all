@@ -64,6 +64,7 @@ public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice
 			return mi.proceed();
 		}
 		catch (Throwable ex) {
+			// 出现异常，再次抛出之前，检查需不需要执行异常通知
 			if (shouldInvokeOnThrowing(ex)) {
 				invokeAdviceMethod(getJoinPointMatch(), null, ex);
 			}

@@ -28,6 +28,7 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.type.filter.TypeFilter;
 
 /**
+ * 本组件由@{@link ComponentScanAnnotationParser}解析
  * Configures component scanning directives for use with @{@link Configuration} classes.
  * Provides support parallel with Spring XML's {@code <context:component-scan>} element.
  *

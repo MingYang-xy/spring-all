@@ -105,11 +105,13 @@ public abstract class DynamicRegistrationBean<D extends Registration.Dynamic> ex
 
 	@Override
 	protected final void register(String description, ServletContext servletContext) {
+		// 这一方法内部，调用servlet的addServlet方法将DispatcherServlet注入tomcat
 		D registration = addRegistration(description, servletContext);
 		if (registration == null) {
 			logger.info(StringUtils.capitalize(description) + " was not registered (possibly already registered?)");
 			return;
 		}
+		// addServlet后返回一个registration，可以继续对这个registration进行更改。
 		configure(registration);
 	}
 

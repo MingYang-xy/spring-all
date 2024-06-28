@@ -145,10 +145,13 @@ public class HandlerExecutionChain {
 	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		for (int i = 0; i < this.interceptorList.size(); i++) {
 			HandlerInterceptor interceptor = this.interceptorList.get(i);
+			// 这里就挨个去执行preHandle方法，一旦有一个返回false，则代表请求已经完成，则直接去执行afterCompletion方法
 			if (!interceptor.preHandle(request, response, this.handler)) {
 				triggerAfterCompletion(request, response, null);
 				return false;
 			}
+			// 记录当前执行的拦截器索引位置，因为后面执行afterCompletion方法时要知道到底在哪个拦截器断的
+			// 从哪个断开，就从断开的位置倒着向前执行afterCompletion方法。
 			this.interceptorIndex = i;
 		}
 		return true;

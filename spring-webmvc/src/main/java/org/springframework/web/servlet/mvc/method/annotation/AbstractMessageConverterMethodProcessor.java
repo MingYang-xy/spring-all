@@ -167,11 +167,10 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 	protected <T> void writeWithMessageConverters(@Nullable T value, MethodParameter returnType,
 			ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
-
+		// 本方法会被RequestResponseBodyMethodProcessor调用，主要处理@ResponseBody注解，也就是将数据写入【响应体】中
 		Object body;
 		Class<?> valueType;
 		Type targetType;
-
 		if (value instanceof CharSequence) {
 			body = value.toString();
 			valueType = String.class;
@@ -272,6 +271,8 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 
 		if (selectedMediaType != null) {
 			selectedMediaType = selectedMediaType.removeQualityValue();
+			// 遍历messageConverters，选择一个可以转换类型的Converter
+			// 这里的write方法实际已经将返回值处理后并将结果写入到response中了，所以后续才看不到handler的返回值
 			for (HttpMessageConverter<?> converter : this.messageConverters) {
 				GenericHttpMessageConverter genericConverter = (converter instanceof GenericHttpMessageConverter ?
 						(GenericHttpMessageConverter<?>) converter : null);
@@ -287,9 +288,11 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 								"Writing [" + LogFormatUtils.formatValue(theBody, !traceOn) + "]");
 						addContentDispositionHeader(inputMessage, outputMessage);
 						if (genericConverter != null) {
+							// 如果加了@ResponseBody注解，这里会被MappingJackson2HttpMessageConverter处理
 							genericConverter.write(body, targetType, selectedMediaType, outputMessage);
 						}
 						else {
+							// 如果返回了String类型则直接写入response
 							((HttpMessageConverter) converter).write(body, selectedMediaType, outputMessage);
 						}
 					}

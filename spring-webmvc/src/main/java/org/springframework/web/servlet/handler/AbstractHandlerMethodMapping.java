@@ -39,12 +39,15 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.MethodIntrospector;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -215,6 +218,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 	/**
 	 * Scan beans in the ApplicationContext, detect and register handler methods.
+	 * 扫描并注册ApplicationContext中的controller的handle方法
 	 * @see #getCandidateBeanNames()
 	 * @see #processCandidateBean
 	 * @see #handlerMethodsInitialized
@@ -262,6 +266,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				logger.trace("Could not resolve type for bean '" + beanName + "'", ex);
 			}
 		}
+		// 这里获取循环的bean实际是全部的bean，这里要通过isHandler方法筛选controller的bean
 		if (beanType != null && isHandler(beanType)) {
 			detectHandlerMethods(beanName);
 		}
@@ -400,6 +405,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	@Nullable
 	protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
 		List<Match> matches = new ArrayList<>();
+		// 这里是尝试直接去map中get请求的地址
 		List<T> directPathMatches = this.mappingRegistry.getMappingsByDirectPath(lookupPath);
 		if (directPathMatches != null) {
 			addMatchingMappings(directPathMatches, matches, request);
@@ -409,7 +415,9 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 		if (!matches.isEmpty()) {
 			Match bestMatch = matches.get(0);
+			// 如果找到了不止一个handler
 			if (matches.size() > 1) {
+				// 这里要根据【请求的方法】，去排序，获取最合适的处理器。越精确优先级越高
 				Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
 				matches.sort(comparator);
 				bestMatch = matches.get(0);
@@ -425,6 +433,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				}
 				else {
 					Match secondBestMatch = matches.get(1);
+					// 如果两个handler的优先级相同，抛出异常
 					if (comparator.compare(bestMatch, secondBestMatch) == 0) {
 						Method m1 = bestMatch.getHandlerMethod().getMethod();
 						Method m2 = secondBestMatch.getHandlerMethod().getMethod();
@@ -571,9 +580,14 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * <p>Package-private for testing purposes.
 	 */
 	class MappingRegistry {
-
+		/**
+		 * 存储所有的 mapping <-> HandlerMethod 映射
+		 */
 		private final Map<T, MappingRegistration<T>> registry = new HashMap<>();
-
+		/**
+		 * 存储所有的 url <-> mapping 映射，注意这里是MultiValueMap，一个url可能对应多个mapping
+		 * MultiValueMap ： List<V> get(Object key)
+		 */
 		private final MultiValueMap<String, T> pathLookup = new LinkedMultiValueMap<>();
 
 		private final Map<String, List<HandlerMethod>> nameLookup = new ConcurrentHashMap<>();
@@ -632,9 +646,12 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		public void register(T mapping, Object handler, Method method) {
 			this.readWriteLock.writeLock().lock();
 			try {
+				//在这里创建的HandlerMethod，注册时是使用的beanName创建的HandlerMethod对象
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
+				//校验映射，看看存不存在 一个mapping 对应多个方法的情况
+				//mapping应该包括url和请求方法，同一个url不同请求方法也是允许的
 				validateMethodMapping(handlerMethod, mapping);
-
+				//这里AbstractHandlerMethodMapping.this.是因为当前类是AbstractHandlerMethodMapping的内部类
 				Set<String> directPaths = AbstractHandlerMethodMapping.this.getDirectPaths(mapping);
 				for (String path : directPaths) {
 					this.pathLookup.add(path, mapping);

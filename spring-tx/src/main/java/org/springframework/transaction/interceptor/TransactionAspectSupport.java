@@ -340,7 +340,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		TransactionAttributeSource tas = getTransactionAttributeSource();
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
 		final TransactionManager tm = determineTransactionManager(txAttr);
-
+		// 检查是否为reactive类型的事务
 		if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
 			boolean isSuspendingFunction = KotlinDetector.isSuspendingFunction(method);
 			boolean hasSuspendingFlowReturnType = isSuspendingFunction &&
@@ -373,26 +373,29 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			}
 			return result;
 		}
-
+		// 运行到此处说明不是reactive类型的事务
 		PlatformTransactionManager ptm = asPlatformTransactionManager(tm);
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
+			// 如果需要的话，开启一个事务，这里会根据注解配置的传播行为来决定是否开启新事务
 			TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
-
 			Object retVal;
 			try {
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
+				// 这里继续执行后续的切面逻辑：invocation.proceed()
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
-				// target invocation exception 事务回滚
+				// target invocation exception
+				// 发生异常了，看看是不是需要回滚，执行AfterThrowing逻辑
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			}
 			finally {
+				// 事务对象被放在了ThreadLocal中，这里需要清除
 				cleanupTransactionInfo(txInfo);
 			}
 
@@ -403,7 +406,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 					retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
 				}
 			}
-
+			// 前面正常执行过来了，没有抛异常，执行AfterReturning逻辑
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
@@ -667,6 +670,9 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				logger.trace("Completing transaction for [" + txInfo.getJoinpointIdentification() +
 						"] after exception: " + ex);
 			}
+			// 这里检查这个异常需不需要回滚
+			// 这里的rollbackOn返回布尔值，表示这个异常是否需要回滚，在默认的实现中只回滚RuntimeException和Error
+			// return (ex instanceof RuntimeException || ex instanceof Error);
 			if (txInfo.transactionAttribute != null && txInfo.transactionAttribute.rollbackOn(ex)) {
 				try {
 					txInfo.getTransactionManager().rollback(txInfo.getTransactionStatus());
@@ -684,6 +690,8 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			else {
 				// We don't roll back on this exception.
 				// Will still roll back if TransactionStatus.isRollbackOnly() is true.
+				// 不需要回滚
+				// 内部还会检查：如果TransactionStatus.isRollbackOnly() 返回true，也要回滚
 				try {
 					txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
 				}

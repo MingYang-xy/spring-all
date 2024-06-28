@@ -683,7 +683,8 @@ class CglibAopProxy implements AopProxy, Serializable {
 			TargetSource targetSource = this.advised.getTargetSource();
 			try {
 				if (this.advised.exposeProxy) {
-					// Make invocation available if necessary.// 这里也是后续我们可以getCurrentProxy的关键
+					// Make invocation available if necessary.
+					// 这里也是后续我们可以getCurrentProxy的关键
 					oldProxy = AopContext.setCurrentProxy(proxy);
 					setProxyContext = true;
 				}
@@ -699,11 +700,13 @@ class CglibAopProxy implements AopProxy, Serializable {
 					// Note that the final invoker must be an InvokerInterceptor, so we know
 					// it does nothing but a reflective operation on the target, and no hot
 					// swapping or fancy proxying.
+					// 这里表示：没有什么切面直接去执行原有方法即可
 					Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
 					retVal = invokeMethod(target, method, argsToUse, methodProxy);
 				}
 				else {
 					// We need to create a method invocation...
+					// 有切面的话，需要创建一个CglibMethodInvocation对象，就是一个方法执行链条。
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
 				retVal = processReturnType(proxy, target, method, retVal);

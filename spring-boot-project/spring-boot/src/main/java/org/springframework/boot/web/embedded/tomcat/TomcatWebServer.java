@@ -120,6 +120,11 @@ public class TomcatWebServer implements WebServer {
 				});
 
 				// Start the server to trigger initialization listeners
+				// 这一个步骤再深入，就进入catalina源码了
+				// 已知这一步：
+				// 1.初始化tomcat的applicationContext时，spring通过实现ServletContainerInitializer接口
+				// 调用addServlet(name, this.servlet)，将DispatcherServlet添加到注册为servlet，并将加载方式设置为懒加载-1
+				// 2.将DispatcherServlet添加到context中，以供后续请求使用。后续处理过程中都能直接拿到该context
 				this.tomcat.start();
 
 				// We can re-throw failure exception directly in the main thread

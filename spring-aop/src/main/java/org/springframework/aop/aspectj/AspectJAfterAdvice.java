@@ -45,10 +45,12 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice
 	@Override
 	@Nullable
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		//当前为after通知逻辑，进来之后先不去执行切面逻辑，先去继续递归执行proceed
 		try {
 			return mi.proceed();
 		}
 		finally {
+			// 很显然，finally中的afterAdvice一定会执行
 			invokeAdviceMethod(getJoinPointMatch(), null, null);
 		}
 	}

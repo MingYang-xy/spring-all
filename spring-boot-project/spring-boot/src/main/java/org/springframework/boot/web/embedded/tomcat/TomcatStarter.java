@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 
 /**
+ * 本类实现了javax的ServletContainerInitializer，可以在servlet容器初始化阶段进行扩展
  * {@link ServletContainerInitializer} used to trigger {@link ServletContextInitializer
  * ServletContextInitializers} and track startup errors.
  *

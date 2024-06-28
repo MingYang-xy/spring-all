@@ -52,6 +52,16 @@ public class ServletRegistrationBean<T extends Servlet> extends DynamicRegistrat
 
 	private static final String[] DEFAULT_MAPPINGS = { "/*" };
 
+	// 本类中的private T servlet 为啥 = DispatcherServlet？
+	// 在new 本类的子类DispatcherServletRegistrationBean时，直接传入的
+	// 在哪new的DispatcherServletRegistrationBean？
+	// 在DispatcherServletAutoConfiguration中有@Bean("dispatcherServletRegistration")
+	// 并且@ConditionalOnBean(value = DispatcherServlet.class, name = "dispatcherServlet")
+	// 因此，本类中成员变量有DispatcherServlet
+	// 后续在哪将DispatcherServlet注入tomcat容器的？
+	// spring容器的，onRefresh()方法，servlet的容器继承了spring原始容器，并在这一步去new tomcat
+	// tomcat初始化时预留了ServletContainerInitializer接口，可以对servletContext进行扩展
+	// 本类一层层向上寻找，实现了上述接口，所以可以在tomcat的初始化过程中将DispatcherServlet注册进容器
 	private T servlet;
 
 	private Set<String> urlMappings = new LinkedHashSet<>();
@@ -190,9 +200,11 @@ public class ServletRegistrationBean<T extends Servlet> extends DynamicRegistrat
 		if (urlMapping.length == 0 && this.alwaysMapUrl) {
 			urlMapping = DEFAULT_MAPPINGS;
 		}
+		// 默认的urlMapping是"/"表示处理所有的请求
 		if (!ObjectUtils.isEmpty(urlMapping)) {
 			registration.addMapping(urlMapping);
 		}
+		// 设置为-1表示延迟加载，只有第一个请求到达时才会初始化
 		registration.setLoadOnStartup(this.loadOnStartup);
 		if (this.multipartConfig != null) {
 			registration.setMultipartConfig(this.multipartConfig);

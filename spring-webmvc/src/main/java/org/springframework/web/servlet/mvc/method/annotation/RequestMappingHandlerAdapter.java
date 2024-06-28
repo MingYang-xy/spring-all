@@ -643,9 +643,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	 * and custom resolvers provided via {@link #setCustomArgumentResolvers}.
 	 */
 	private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
+		// 在寻找参数的解析器时，会遍历list，只要找到一个可以匹配的就不再继续匹配。因此顺序很重要。
 		List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>(30);
 
 		// Annotation-based argument resolution
+		// 添加基于注解的参数解析器
+		// 例如@RequestParam @RequestBody
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
 		resolvers.add(new RequestParamMapMethodArgumentResolver());
 		resolvers.add(new PathVariableMethodArgumentResolver());
@@ -663,6 +666,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		resolvers.add(new RequestAttributeMethodArgumentResolver());
 
 		// Type-based argument resolution
+		// 添加基于特殊类型的参数解析器
+		// 比如ServletRequest类直接就能获取到当前请求，就是靠这些解析器解析的
 		resolvers.add(new ServletRequestMethodArgumentResolver());
 		resolvers.add(new ServletResponseMethodArgumentResolver());
 		resolvers.add(new HttpEntityMethodProcessor(getMessageConverters(), this.requestResponseBodyAdvice));
@@ -677,11 +682,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		}
 
 		// Custom arguments
+		// 用户自定义的参数解析器
 		if (getCustomArgumentResolvers() != null) {
 			resolvers.addAll(getCustomArgumentResolvers());
 		}
 
 		// Catch-all
+		// 这三个是范围最大的解析器，如果这三个都不能正确解析，那就获取不到前端传递的参数了。
 		resolvers.add(new PrincipalMethodArgumentResolver());
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
 		resolvers.add(new ServletModelAttributeMethodProcessor(true));
@@ -786,11 +793,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Override
 	protected ModelAndView handleInternal(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-
 		ModelAndView mav;
+		// 检查请求方法是否支持，检查是否需要session
 		checkRequest(request);
 
 		// Execute invokeHandlerMethod in synchronized block if required.
+		// session是线程不安全的，如果一开始就把这个synchronizeOnSession设置为true，则一个在一个session中只能同时处理一个请求。
 		if (this.synchronizeOnSession) {
 			HttpSession session = request.getSession(false);
 			if (session != null) {
@@ -806,9 +814,10 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		}
 		else {
 			// No synchronization on session demanded at all...
+			// 上面不去手动设置，所有的请求都会走这里
 			mav = invokeHandlerMethod(request, response, handlerMethod);
 		}
-
+		// 处理响应头【Cache-Control】
 		if (!response.containsHeader(HEADER_CACHE_CONTROL)) {
 			if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
 				applyCacheSeconds(response, this.cacheSecondsForSessionAttributeHandlers);
@@ -852,7 +861,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Nullable
 	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-
+		// 这里创建了异步请求相关的对象
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 		AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
 		asyncWebRequest.setTimeout(this.asyncRequestTimeout);
@@ -869,20 +878,26 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				(ServletWebRequest) asyncWebRequest : new ServletWebRequest(request, response));
 
 		try {
+			// 创建DataBinderFactory，Binder主要做数据绑定工作。
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
-
+			// new了ServletInvocableHandlerMethod，可执行的HandlerMethod
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 			if (this.argumentResolvers != null) {
+				// 设置参数解析器
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 			}
 			if (this.returnValueHandlers != null) {
+				// 设置返回值处理器
 				invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 			}
+			// 设置DataBinder
 			invocableMethod.setDataBinderFactory(binderFactory);
+			// 设置参数名称发现器，解析参数时会用到参数名，需要从request中get(参数名)得到参数值
 			invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
 
 			ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+			// 这里从request取出来一开始set的参数
 			mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
 			modelFactory.initModel(webRequest, mavContainer, invocableMethod);
 			mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
@@ -899,12 +914,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				});
 				invocableMethod = invocableMethod.wrapConcurrentResult(result);
 			}
-
+			// 执行handleMethod，在里面大致流程为：【执行参数解析器】- 【执行handle逻辑】- 【执行返回值解析器】
 			invocableMethod.invokeAndHandle(webRequest, mavContainer);
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
 			}
-
+			// 将结果转为ModelAndView
 			return getModelAndView(mavContainer, modelFactory, webRequest);
 		}
 		finally {
@@ -1008,8 +1023,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Nullable
 	private ModelAndView getModelAndView(ModelAndViewContainer mavContainer,
 			ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
-
 		modelFactory.updateModel(webRequest, mavContainer);
+		// 如果mavContainer已经被标记为【已处理完毕】
 		if (mavContainer.isRequestHandled()) {
 			return null;
 		}

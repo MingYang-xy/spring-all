@@ -456,6 +456,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 			objectWriter.writeValue(generator, value);
 
 			writeSuffix(generator, object);
+			// generator的outputBuffer存储了转换后的jsonStr的byte[]
 			generator.flush();
 		}
 		catch (InvalidDefinitionException ex) {

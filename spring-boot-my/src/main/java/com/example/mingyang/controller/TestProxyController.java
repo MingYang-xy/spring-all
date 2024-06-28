@@ -1,13 +1,16 @@
 package com.example.mingyang.controller;
 
 import com.example.mingyang.domain.Student;
+import com.example.mingyang.exception.ServiceException;
 import com.example.mingyang.service.IStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,9 +33,30 @@ public class TestProxyController {
 	 * 查询学生列表
 	 */
 	@ResponseBody
-	@RequestMapping("/list")
-	public List<Student> list(Student student) {
+	@RequestMapping("/list/{id}")
+	public List<Student> list(@PathVariable("id") String id, Student student, Date now) {
+		System.out.println("id = " + id);
+		System.out.println("now = " + now);
 		return studentService.selectStudentList(student);
+	}
+
+	/**
+	 * 查询学生列表
+	 */
+	@GetMapping("/list")
+	public String list1() {
+		return "/list";
+	}
+
+	/**
+	 * 查询学生列表
+	 */
+	@ResponseBody
+	@RequestMapping("/ex")
+	public List<Student> list(Date now) {
+		// 配置好@InitBinder之后，前端再传入now参数时就会自动绑定到Date类型的now上
+		System.out.println("now = " + now);
+		throw new ServiceException("测试异常!");
 	}
 
 	/**
@@ -44,4 +68,12 @@ public class TestProxyController {
 		return studentService.insertStudent(student);
 	}
 
+	/**
+	 * 新增保存学生
+	 */
+	@ResponseBody
+	@RequestMapping("/add2")
+	public int add2(Student student) {
+		return studentService.insertStudent2(student);
+	}
 }

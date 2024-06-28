@@ -630,7 +630,9 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 			actualArgs = null;
 		}
 		try {
+			//this.aspectJAdviceMethod表示需要执行的切面方法
 			ReflectionUtils.makeAccessible(this.aspectJAdviceMethod);
+			// 通过this.aspectInstanceFactory.getAspectInstance()获取到切面类实例
 			return this.aspectJAdviceMethod.invoke(this.aspectInstanceFactory.getAspectInstance(), actualArgs);
 		}
 		catch (IllegalArgumentException ex) {

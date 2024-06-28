@@ -12,7 +12,7 @@ import lombok.Data;
 public class Student {
 
 	/**
-	 *id
+	 * id
 	 */
 	private Long id;
 	/**
@@ -24,53 +24,10 @@ public class Student {
 	 * 年龄
 	 */
 
-	private Long age;
+	private Integer age;
 
 	/**
 	 * 性别
 	 */
 	private String gender;
-
-
-	// public Long getId() {
-	// 	return id;
-	// }
-	//
-	// public void setId(Long id) {
-	// 	this.id = id;
-	// }
-	//
-	// public String getUserName() {
-	// 	return userName;
-	// }
-	//
-	// public void setUserName(String userName) {
-	// 	this.userName = userName;
-	// }
-	//
-	// public Long getAge() {
-	// 	return age;
-	// }
-	//
-	// public void setAge(Long age) {
-	// 	this.age = age;
-	// }
-	//
-	// public String getGender() {
-	// 	return gender;
-	// }
-	//
-	// public void setGender(String gender) {
-	// 	this.gender = gender;
-	// }
-	//
-	// @Override
-	// public String toString() {
-	// 	return "Student{" +
-	// 			"id=" + id +
-	// 			", userName='" + userName + '\'' +
-	// 			", age=" + age +
-	// 			", gender='" + gender + '\'' +
-	// 			'}';
-	// }
 }

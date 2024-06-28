@@ -218,6 +218,7 @@ public class ErrorMvcAutoConfiguration {
 			if (response.getContentType() == null) {
 				response.setContentType(getContentType());
 			}
+			//在这里生成的默认的error页面
 			builder.append("<html><body><h1>Whitelabel Error Page</h1>").append(
 					"<p>This application has no explicit mapping for /error, so you are seeing this as a fallback.</p>")
 					.append("<div id='created'>").append(timestamp).append("</div>")

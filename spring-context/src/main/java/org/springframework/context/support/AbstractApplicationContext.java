@@ -601,7 +601,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				onRefresh();
 
 				// Check for listener beans and register them.
-				// 注册监听器
+				// 注册监听器的bean
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
@@ -609,6 +609,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 最后一步，发布ContextRefreshedEvent
 				finishRefresh();
 			}
 
@@ -619,7 +620,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
-				// 销毁bean
+				// 销毁bean，其实就是调用map的clear方法。
 				destroyBeans();
 
 				// Reset 'active' flag.
@@ -975,15 +976,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@SuppressWarnings("deprecation")
 	protected void finishRefresh() {
 		// Clear context-level resource caches (such as ASM metadata from scanning).
+		// 清理上下文中的缓存
 		clearResourceCaches();
 
 		// Initialize lifecycle processor for this context.
+		// 初始化生命周期处理器相关的bean
 		initLifecycleProcessor();
 
 		// Propagate refresh to lifecycle processor first.
+		// 调用生命周期处理器的onRefresh()方法，这里其实也是一个扩展点
 		getLifecycleProcessor().onRefresh();
 
 		// Publish the final event.
+		// 发布refresh流程的最后一个事件
 		publishEvent(new ContextRefreshedEvent(this));
 
 		// Participate in LiveBeansView MBean, if active.

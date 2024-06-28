@@ -47,6 +47,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
+ * 当前类可以由一个beanName来创建，也可以由bean实例来创建
  * Encapsulates information about a handler method consisting of a
  * {@linkplain #getMethod() method} and a {@linkplain #getBean() bean}.
  * Provides convenient access to method parameters, the method return value,
@@ -371,9 +372,11 @@ public class HandlerMethod {
 	 */
 	public HandlerMethod createWithResolvedBean() {
 		Object handler = this.bean;
+		// 一开始启动容器时，this.bean只存储了beanName
 		if (this.bean instanceof String) {
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
 			String beanName = (String) this.bean;
+			// 获取bean实例
 			handler = this.beanFactory.getBean(beanName);
 		}
 		return new HandlerMethod(this, handler);

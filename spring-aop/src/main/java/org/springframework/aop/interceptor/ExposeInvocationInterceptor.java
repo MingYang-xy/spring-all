@@ -91,6 +91,7 @@ public final class ExposeInvocationInterceptor implements MethodInterceptor, Pri
 	@Override
 	@Nullable
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		// 将当前方执行对象放入threadLocal中，以便后续过程中使用(后续只是可能会用到)
 		MethodInvocation oldInvocation = invocation.get();
 		invocation.set(mi);
 		try {

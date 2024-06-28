@@ -225,6 +225,7 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 		Assert.state(attrs instanceof ServletRequestAttributes, "No current ServletRequestAttributes");
 		List<MediaType> requestedMediaTypes = getMediaTypes(((ServletRequestAttributes) attrs).getRequest());
 		if (requestedMediaTypes != null) {
+			// 获取所有能够解析当前viewName的候选viewResolver，thymeleaf实现了对应的视图解析接口，这里会拿到thymeleaf的具体实现
 			List<View> candidateViews = getCandidateViews(viewName, locale, requestedMediaTypes);
 			View bestView = getBestView(candidateViews, requestedMediaTypes, attrs);
 			if (bestView != null) {

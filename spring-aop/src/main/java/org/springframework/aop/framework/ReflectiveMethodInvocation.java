@@ -159,15 +159,24 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	@Nullable
 	public Object proceed() throws Throwable {
 		// We start with an index of -1 and increment early.
+		// this.currentInterceptorIndex当前方法拦截器的索引，初始化为-1
+		// 首次进入时，-1 == 拦截器个数(eg.5 -1) 不成立
+		// 下一次时， 0 == 拦截器个数(eg.5 -1) 不成立
+		// ...
+		// 第五次时，3 == 拦截器个数(eg.5 -1) 不成立，执行最后一个拦截器
+		// 第六次时，4 == 拦截器个数(eg.5 -1) 成立，所有拦截器都执行完了，就执行目标方法
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}
-
-		Object interceptorOrInterceptionAdvice = // 这里做了++操作，每次进来的index值都不一样了
+		// 这里做了++i操作，初始化值为-1，++i就是get(0)，先自增再参与运算。
+		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
+		// DynamicMethodMatcher动态方法匹配表示有时候一个切面表达式可能还含有参数，如果参数无法匹配就不生效，
+		// 因此传入参数的不同可能导致匹配结果不同，所以需要动态匹配。
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
 			// Evaluate dynamic method matcher here: static part will already have
 			// been evaluated and found to match.
+			// 使用了AOP的方法，经过前面步骤的封装，都成为了InterceptorAndDynamicMethodMatcher的一个子类型。
 			InterceptorAndDynamicMethodMatcher dm =
 					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
 			Class<?> targetClass = (this.targetClass != null ? this.targetClass : this.method.getDeclaringClass());
@@ -183,6 +192,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 		else {
 			// It's an interceptor, so we just invoke it: The pointcut will have
 			// been evaluated statically before this object was constructed.
+			// 这里就是一个简单的方法拦截器，直接调用invoke方法
 			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
 		}
 	}
@@ -195,6 +205,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 */
 	@Nullable
 	protected Object invokeJoinpoint() throws Throwable {
+		// 反射调用目标方法，内部就是：method.invoke(target, args)
 		return AopUtils.invokeJoinpointUsingReflection(this.target, this.method, this.arguments);
 	}
 

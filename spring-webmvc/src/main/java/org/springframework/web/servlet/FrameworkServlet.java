@@ -880,6 +880,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			processRequest(request, response);
 		}
 		else {
+			// 这里去调用了javax.servlet.http.HttpServlet的service()，这个方法又会回到本类的doGet、doPost、、、
 			super.service(request, response);
 		}
 	}
@@ -894,7 +895,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	@Override
 	protected final void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// 不分请求方法，全都进入processRequest
 		processRequest(request, response);
 	}
 
@@ -905,7 +906,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	@Override
 	protected final void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// 不分请求方法，全都进入processRequest
 		processRequest(request, response);
 	}
 
@@ -916,7 +917,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	@Override
 	protected final void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// 不分请求方法，全都进入processRequest
 		processRequest(request, response);
 	}
 
@@ -927,7 +928,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	@Override
 	protected final void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// 不分请求方法，全都进入processRequest
 		processRequest(request, response);
 	}
 
@@ -987,22 +988,24 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 */
 	protected final void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// 记录开始时间
 		long startTime = System.currentTimeMillis();
+		// 记录请求可能发生的错误
 		Throwable failureCause = null;
-
+		// Locale：本地化，就是推断当前应用的语言，比如zh_CN
 		LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
 		LocaleContext localeContext = buildLocaleContext(request);
-
+		// 这一步获取的请求参数是在OncePerRequestFilter中设置的
 		RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();
 		ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);
 
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 		asyncManager.registerCallableInterceptor(FrameworkServlet.class.getName(), new RequestBindingInterceptor());
-
+		// 这里将Locale信息和请求参数信息存入了ThreadLocal
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
+			// 这里进入DispatcherServlet重写的方法
 			doService(request, response);
 		}
 		catch (ServletException | IOException ex) {
@@ -1013,13 +1016,15 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			failureCause = ex;
 			throw new NestedServletException("Request processing failed", ex);
 		}
-
+		// 这里做一些清理工作，打印日志，发布【请求处理完成事件】
 		finally {
 			resetContextHolders(request, previousLocaleContext, previousAttributes);
 			if (requestAttributes != null) {
 				requestAttributes.requestCompleted();
 			}
+			//里面打印了很多请求结果
 			logResult(request, response, failureCause, asyncManager);
+			//发布【请求处理完成事件】
 			publishRequestHandledEvent(request, response, startTime, failureCause);
 		}
 	}

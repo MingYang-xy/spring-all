@@ -10,12 +10,14 @@ dependencies {
     implementation(project(":spring-boot-project:spring-boot-starters:spring-boot-starter"))
     implementation(project(":spring-boot-project:spring-boot-starters:spring-boot-starter-web"))
     implementation(project(":spring-boot-project:spring-boot-starters:spring-boot-starter-aop"))
+    implementation(project(":spring-boot-project:spring-boot-starters:spring-boot-starter-thymeleaf"))
     testImplementation(project(":spring-boot-project:spring-boot-starters:spring-boot-starter-test"))
     implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.2.2'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
     // 解决lombok不生效的问题
     implementation 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.28'
 }
 
 

@@ -142,11 +142,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	@Nullable
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
-
+		// 这里会调用参数解析器，解析方法的参数。
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 执行方法，也就是controller中的方法
 		return doInvoke(args);
 	}
 
@@ -165,6 +166,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		}
 
 		Object[] args = new Object[parameters.length];
+		// 遍历当前方法的参数
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
@@ -172,10 +174,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (args[i] != null) {
 				continue;
 			}
+			// 判断当前参数是否有对应的参数解析器
+			// 方法内部是将参数挨个传入解析器的supportsParameter方法，直到找到一个支持解析的解析器。并将解析器缓存起来。
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
+				// 解析参数，调用前一步找到的参数解析器的resolveArgument方法
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			}
 			catch (Exception ex) {
@@ -202,6 +207,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (KotlinDetector.isSuspendingFunction(method)) {
 				return CoroutinesUtils.invokeSuspendingFunction(method, getBean(), args);
 			}
+			// 反射执行目标方法
 			return method.invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {
